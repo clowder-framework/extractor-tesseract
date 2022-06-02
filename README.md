@@ -20,7 +20,7 @@ OCR text extracted from the input associated with the original file.
 A sample input file "browndog.png" and a sample output file "browndog.png.sample-output" are available in this directory.
 
 ## Test locally with Clowder
-1. In extractors-cv/extractors-tesseract/ folder run: 
+1. In extractor-tesseract/ folder run: 
       
       ```docker build -t clowder/ocr:test .```
 
