@@ -17,39 +17,38 @@ class Tesseract(Extractor):
         logging.getLogger('pyclowder').setLevel(logging.DEBUG)
         logging.getLogger('__main__').setLevel(logging.DEBUG)
 
-    def ocr(self, filename, tmpfilename):
+    def ocr(self, filename, tmpfilename, noColumns, minLineLength):
         text = ""
         tmpfile = None
         try:
-            subprocess.check_call(["tesseract", filename, tmpfilename])
+            subprocess.check_call(["tesseract", "--psm", noColumns, filename, tmpfilename])
             tmpfile = "./" + tmpfilename + ".txt"
             with open(tmpfile, 'r') as f:
                 text = f.read()
         finally:
             if tmpfile is not None and os.path.isfile(tmpfile):
                 os.remove(tmpfile)
-            return self.clean_text(text)
+            return self.clean_text(text, minLineLength)
 
-    def clean_text(self, text):
+    def clean_text(self, text, minLineLength):
         t = ""
-        words = text.split()
-        for word in words:
-            w = self.clean_word(word)
-            if w != "":
-                t += w + " "
+        lines = text.splitlines()
+        for line in lines:
+            if line != "" and len(line) >= int(minLineLength):
+                if len(t) == 0:
+                    t = line
+                else:
+                    t += "\n" + line
         return t
-
-    def clean_word(self, word):
-        cw = word.strip('(){}[].,')
-        if cw.isalnum() and len(cw) >= 2:
-            return cw
-        else:
-            return ""
 
     def process_message(self, connector, host, secret_key, resource, parameters):
         inputfile = resource["local_paths"][0]
 
-        ocrtext = self.ocr(inputfile, str(uuid.uuid4())).strip()
+        # get the parameters
+        noColumns = parameters['parameters']["no-columns"]
+        minLineLength = parameters['parameters']["min-line-length"]
+
+        ocrtext = self.ocr(inputfile, str(uuid.uuid4()), str(noColumns), minLineLength).strip()
         if not ocrtext:
             ocrtext = 'No text detected'
 

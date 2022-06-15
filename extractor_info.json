@@ -37,5 +37,39 @@
   "bibtex": [],
   "labels": [
     "Type/Image"
-  ]
+  ],
+  "parameters": {
+    "schema": {
+      "no-columns": {
+        "type": "string",
+        "title": "PSM config to enable multiple columns extractions",
+        "enum": [
+          "3",
+          "6"
+        ],
+        "default": "6"
+      },
+      "min-line-length": {
+        "type": "integer",
+        "title": "Minimum required length of line",
+        "default": 10
+      }
+    },
+    "form": [
+      {
+        "key": "no-columns",
+        "type": "select",
+        "notitle": true,
+        "titleMap": {
+          "3": "Multi-columns",
+          "6": "Single column "
+        }
+      },
+      {
+        "key": "min-line-length",
+        "inlinetitle": "Minimum required length of line",
+        "notitle": true
+      }
+    ]
+  }
 }
